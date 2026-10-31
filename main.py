@@ -2,11 +2,9 @@ import csv
 
 def readData():
     with open('data/circus_orders.csv', newline='') as csvfile:
-        orderReader = csv.reader(csvfile, delimiter=';', quotechar='|')
-        orderData = {}
-        for row in orderReader:
-            print(', '.join(row))
+        orderData = csv.DictReader(csvfile, delimiter=';')
+        for row in orderData:
+            print(f'{row['Tilauksen päivämäärä']} {row['Päivämäärä']}')
+        return orderData
 
-
-readData()
-
+orderData = readData()

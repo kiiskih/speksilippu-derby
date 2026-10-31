@@ -1,8 +1,10 @@
 import csv
-from tkinter import *
+from tkinter import * 
 import time
 from PIL import Image
 from PIL import ImageTk
+from datetime import datetime
+from datetime import timedelta
 
 #def readData():
 #    with open('data/circus_orders.csv', newline='') as csvfile:
@@ -14,8 +16,17 @@ from PIL import ImageTk
 
 #readData()
 
+def loadImage(path, x = None, y = None):
+    image = Image.open(path)
+    if (x != None and y != None):
+        image = image.resize((x,y))
+    image = ImageTk.PhotoImage(image)
+    return image
+
+    
 def animation():
 
+    # Initiating the canvas
     window = Tk()
 
     WIDTH = 2000
@@ -26,42 +37,47 @@ def animation():
     canvas = Canvas(frame,width=WIDTH,height=HEIGHT)
     canvas.pack(expand = True, fill = BOTH)
 
-    backgroundImage = Image.open("background.png")
-    #backgroundImage = backgroundImage.resize((3550,700))
-    backgroundImage = ImageTk.PhotoImage(backgroundImage)
+    # loading the images
+    backgroundImage = loadImage("background.png")
+    messukylaImage = loadImage("MK.png", 100, 50)
+    tamperetaloImage = loadImage("TT.png", 100, 50)
+    aleksanteriImage = loadImage("A.png", 100, 50)
+    
+    #Adding the background and date text
+    background = canvas.create_image(1000,600, image=backgroundImage)
 
-    messukylaImage = Image.open("MK.png")
-    messukylaImage = messukylaImage.resize((100,50))
-    messukylaImage = ImageTk.PhotoImage(messukylaImage)
+    # Start date of ticket sale
+    date = datetime(2026, 10, 1) 
 
-    tamperetaloImage = Image.open("TT.png")
-    tamperetaloImage = tamperetaloImage.resize((100,50))
-    tamperetaloImage = ImageTk.PhotoImage(tamperetaloImage)
-  
-    aleksanteriImage = Image.open("A.png")
-    aleksanteriImage = aleksanteriImage.resize((100,50))
-    aleksanteriImage = ImageTk.PhotoImage(aleksanteriImage)
-  
+    dateText = Label(window, text=date.strftime("%d/%m/%Y"), font=("Arial", 100))
+    dateText.place(x=725, y=10)
+
+    #Setting the starting positions
     StartingPosition = 300
     concerHallWidth = 85
 
-    background = canvas.create_image(1000,600, image=backgroundImage)
+
     aleksanteri = canvas.create_image(100,StartingPosition, image=aleksanteriImage)
-    messukyla1 = canvas.create_image(100,StartingPosition+concerHallWidth*1+40, image=messukylaImage)
-    messukyla2 = canvas.create_image(100,StartingPosition+concerHallWidth*2+30, image=messukylaImage)
+    messukyla1 = canvas.create_image(100,StartingPosition+concerHallWidth*1+30, image=messukylaImage)
+    messukyla2 = canvas.create_image(100,StartingPosition+concerHallWidth*2+20, image=messukylaImage)
     messukyla3 = canvas.create_image(100,StartingPosition+concerHallWidth*3+20, image=messukylaImage)
     messukyla4 = canvas.create_image(100,StartingPosition+concerHallWidth*4+10, image=messukylaImage)
     messukyla5 = canvas.create_image(100,StartingPosition+concerHallWidth*5+10, image=messukylaImage)
     tamperetalo1 = canvas.create_image(100,StartingPosition+concerHallWidth*6+10, image=tamperetaloImage)
-    tamperetalo2= canvas.create_image(100,StartingPosition+concerHallWidth*7+20, image=tamperetaloImage)
+    tamperetalo2= canvas.create_image(100,StartingPosition+concerHallWidth*7+10, image=tamperetaloImage)
     
     window.update()
 
+    #Defining the length of track
     lengthOfTenth = 175
-    
-    while True:
-        time.sleep(30)
 
+    #TBD: read the data
+    #orderData = readData()
+
+    while True:
+        time.sleep(5)
+        date = date+timedelta(days = 1)
+        dateText.config(text=date.strftime("%d/%m/%Y"))
         canvas.move(aleksanteri, lengthOfTenth*1, 0)
         canvas.move(messukyla1, lengthOfTenth*2, 0)
         canvas.move(messukyla2, lengthOfTenth*3, 0)
@@ -75,6 +91,5 @@ def animation():
 
     window.mainloop()
 
-#orderData = readData()
 animation()
 

@@ -4,12 +4,12 @@ import time
 from PIL import Image
 from PIL import ImageTk
 
-def readData():
-    with open('data/circus_orders.csv', newline='') as csvfile:
-        orderData = csv.DictReader(csvfile, delimiter=';')
-        for row in orderData:
-            print(f'{row['Tilauksen päivämäärä']} {row['Päivämäärä']}')
-        return orderData
+#def readData():
+#    with open('data/circus_orders.csv', newline='') as csvfile:
+#        orderData = csv.DictReader(csvfile, delimiter=';')
+#        for row in orderData:
+#            print(f'{row['Tilauksen päivämäärä']} {row['Päivämäärä']}')
+#        return orderData
 
 
 #readData()
@@ -26,6 +26,10 @@ def animation():
     canvas = Canvas(frame,width=WIDTH,height=HEIGHT)
     canvas.pack(expand = True, fill = BOTH)
 
+    backgroundImage = Image.open("background.png")
+    #backgroundImage = backgroundImage.resize((3550,700))
+    backgroundImage = ImageTk.PhotoImage(backgroundImage)
+
     messukylaImage = Image.open("MK.png")
     messukylaImage = messukylaImage.resize((100,50))
     messukylaImage = ImageTk.PhotoImage(messukylaImage)
@@ -39,34 +43,38 @@ def animation():
     aleksanteriImage = ImageTk.PhotoImage(aleksanteriImage)
   
     StartingPosition = 300
-    concerHallWidth = 75
+    concerHallWidth = 85
 
+    background = canvas.create_image(1000,600, image=backgroundImage)
     aleksanteri = canvas.create_image(100,StartingPosition, image=aleksanteriImage)
-    messukyla1 = canvas.create_image(100,StartingPosition+concerHallWidth*1, image=messukylaImage)
-    messukyla2 = canvas.create_image(100,StartingPosition+concerHallWidth*2, image=messukylaImage)
-    messukyla3 = canvas.create_image(100,StartingPosition+concerHallWidth*3, image=messukylaImage)
-    messukyla4 = canvas.create_image(100,StartingPosition+concerHallWidth*4, image=messukylaImage)
-    messukyla5 = canvas.create_image(100,StartingPosition+concerHallWidth*5, image=messukylaImage)
-    tamperetalo1 = canvas.create_image(100,StartingPosition+concerHallWidth*6, image=tamperetaloImage)
-    tamperetalo2= canvas.create_image(100,StartingPosition+concerHallWidth*7, image=tamperetaloImage)
+    messukyla1 = canvas.create_image(100,StartingPosition+concerHallWidth*1+40, image=messukylaImage)
+    messukyla2 = canvas.create_image(100,StartingPosition+concerHallWidth*2+30, image=messukylaImage)
+    messukyla3 = canvas.create_image(100,StartingPosition+concerHallWidth*3+20, image=messukylaImage)
+    messukyla4 = canvas.create_image(100,StartingPosition+concerHallWidth*4+10, image=messukylaImage)
+    messukyla5 = canvas.create_image(100,StartingPosition+concerHallWidth*5+10, image=messukylaImage)
+    tamperetalo1 = canvas.create_image(100,StartingPosition+concerHallWidth*6+10, image=tamperetaloImage)
+    tamperetalo2= canvas.create_image(100,StartingPosition+concerHallWidth*7+20, image=tamperetaloImage)
     
     window.update()
 
+    lengthOfTenth = 175
+    
     while True:
-        time.sleep(3)
-        canvas.move(aleksanteri, 10, 0)
-        canvas.move(messukyla1, 200, 0)
-        canvas.move(messukyla2, 100, 0)
-        canvas.move(messukyla3, 50, 0)
-        canvas.move(messukyla4, 10, 0)
-        canvas.move(messukyla5, 100, 0)
-        canvas.move(tamperetalo1, 100, 0)
-        canvas.move(tamperetalo2, 100, 0)
+        time.sleep(30)
+
+        canvas.move(aleksanteri, lengthOfTenth*1, 0)
+        canvas.move(messukyla1, lengthOfTenth*2, 0)
+        canvas.move(messukyla2, lengthOfTenth*3, 0)
+        canvas.move(messukyla3, lengthOfTenth*4, 0)
+        canvas.move(messukyla4, lengthOfTenth*5, 0)
+        canvas.move(messukyla5, lengthOfTenth*6, 0)
+        canvas.move(tamperetalo1, lengthOfTenth*7, 0)
+        canvas.move(tamperetalo2, lengthOfTenth*8, 0)
         window.update()
            
 
     window.mainloop()
-    
-orderData = readData()
+
+#orderData = readData()
 animation()
 

@@ -25,6 +25,16 @@ QUOTAS = {
     TT2: 400  # Don't include lippumafia quota.
 }
 
+X1_IDX = 0
+
+DIVIDER = 30
+
+SECS_BETWEEN_DATES = 1
+MS_BETWEEN_DATES = SECS_BETWEEN_DATES * 1000  # milliseconds.
+
+MS_BETWEEN_UPDATES = MS_BETWEEN_DATES / DIVIDER  # Aim for 30 fps. 
+SECS_BETWEEN_UPDATES = SECS_BETWEEN_DATES / DIVIDER
+
 def readData():
     with open('data/circus_orders.csv', newline='') as csvfile:
         orderData = csv.DictReader(csvfile, delimiter=';')
@@ -109,24 +119,39 @@ def animation():
     # Read the data
     orderData = readData()
 
+    previousDayTotals = {e: 0 for e in EVENTS}
     while True:
-        time.sleep(1)
-        print("")
+        # time.sleep(1)
         displayDate = displayDate + timedelta(days = 1)
         dateText.config(text=displayDate.strftime("%d/%m/%Y"))
         dtStr = displayDate.isoformat()
+        if displayDate >= date.today():
+            print("Current date reached!")
+            break
+
         if dtStr not in orderData:
             # No sales for the given day.
             print(f"No sales in {dtStr}")
             window.update()
             continue
 
-        for event in EVENTS:
-            newTotal = orderData[dtStr][event]
-            newX = START_POS_X + (TRACK_LENGTH / QUOTAS[event]) * newTotal
-            print(f"{dtStr} {event}: {newTotal}, {newX}")
-            canvas.moveto(CANVAS_IMAGES[event], x=newX)
-        window.update()
+        print("")
+        newXPositions = {e: START_POS_X + (TRACK_LENGTH / QUOTAS[e]) * orderData[dtStr][e] for e in EVENTS}
+        xDeltas = {e: (START_POS_X + (TRACK_LENGTH / QUOTAS[e]) * orderData[dtStr][e]) - canvas.coords(CANVAS_IMAGES[e])[X1_IDX] for e in EVENTS}
+        print(f"newXPositions: {newXPositions}")
+        print(f"xDeltas: {xDeltas}")
+        # for event in EVENTS:
+        #     print(canvas.coords(CANVAS_IMAGES[event])[X1_IDX])
+        for timeStep in range(0, MS_BETWEEN_DATES, int(MS_BETWEEN_UPDATES)):
+            print(f"{dtStr}: Step {timeStep}")
+            for event in EVENTS:
+                currentCoords = canvas.coords(CANVAS_IMAGES[event])
+                newX = currentCoords[X1_IDX] + (xDeltas[event] / DIVIDER)
+                canvas.moveto(CANVAS_IMAGES[event], x=(newX - 50))
+                print(f"  {event} newX: {newX}, step: {xDeltas[event] / DIVIDER}, currentX1: {currentCoords[X1_IDX]}")
+            window.update() 
+            time.sleep(SECS_BETWEEN_UPDATES)
+        previousDayTotals = orderData[dtStr]
 
     window.mainloop()
 
